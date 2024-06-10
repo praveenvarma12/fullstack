@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Director Finder</title>
+</head>
+<body>
+    <h1>Welcome to the Movie Director Finder!</h1>
+    <div class="container">
+        <h2>Search for a Movie</h2>
+        <form id="movieForm">
+            <input type="text" id="movieName" name="movieName" placeholder="Enter movie name" required><br><br>
+            <button type="submit">Find Director</button>
+        </form>
+        <div id="directorDetails" class="director-details"></div>
+    </div>
+
+    <script>
+        document.getElementById('movieForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const movieName = document.getElementById('movieName').value;
+            fetch(`http://www.omdbapi.com/?t=${encodeURIComponent(movieName)}&apikey=706f9753`)
+                .then(response => response.json())
+                .then(data => {
+                    const directorDiv = document.getElementById('directorDetails');
+                    if (data.Response === "True") {
+                        directorDiv.innerHTML = `
+                            <h3>The director of ${data.Title} is ${data.Director}</h3>
+                            <img src="${data.Poster}" alt="${data.Title} Poster" class="movie-poster">
+                        `;
+                    } else {
+                        directorDiv.innerHTML = `<p>Movie not found!</p>`;
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('directorDetails').innerHTML = `<p>Error fetching director details</p>`;
+                });
+        });
+    </script>
+</body>
+</html>
